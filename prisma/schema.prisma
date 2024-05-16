@@ -15,8 +15,30 @@ datasource db {
 
 // placeholder user model
 model User {
-  id       String   @id @default(uuid())
+  id       Int   @id @default(autoincrement())
   email    String   @unique
+  username String  @unique
   name     String?
   password String
+  trackers Tracker[]
+}
+
+model Tracker {
+  id          Int   @id @default(autoincrement())
+  name        String
+  description String?
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  locations   Location[]
+}
+
+model Location {
+  id        Int   @id @default(autoincrement()  )
+  latitude  Float
+  longitude Float
+  tracker   Tracker  @relation(fields: [trackerId], references: [id])
+  trackerId Int
+  createdAt DateTime @default(now())
 }
