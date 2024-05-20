@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateLocationDto {
   @IsNotEmpty()
@@ -16,4 +16,10 @@ export class CreateLocationDto {
   @IsNumber()
   @ApiProperty()
   longitude: number;
+
+  @IsDate()
+  @ApiProperty({
+    required: false,
+  })
+  timestamp?: Date;
 }

@@ -40,5 +40,5 @@ model Location {
   longitude Float
   tracker   Tracker  @relation(fields: [trackerId], references: [id])
   trackerId Int
-  createdAt DateTime @default(now())
+  timestamp DateTime @default(now())
 }
