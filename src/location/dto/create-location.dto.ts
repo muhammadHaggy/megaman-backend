@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateLocationDto {
@@ -21,5 +22,6 @@ export class CreateLocationDto {
   @ApiProperty({
     required: false,
   })
+  @Type(() => Date)
   timestamp?: Date;
 }

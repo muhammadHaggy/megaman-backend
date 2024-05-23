@@ -24,7 +24,7 @@ async function bootstrap() {
       transform: true,
     })
   );
-  await app.listen(parseInt(process.env.PORT) || 8001);
+  await app.listen(parseInt(process.env.PORT) || 8005, '0.0.0.0');
 }
 
 bootstrap();
