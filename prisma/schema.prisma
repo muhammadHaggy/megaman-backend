@@ -21,17 +21,29 @@ model User {
   name     String?
   password String
   trackers Tracker[]
+  assets   Asset[]
+}
+
+model Asset {
+  id          Int   @id @default(autoincrement())
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  trackerId   Int @unique
+  tracker     Tracker  @relation(fields: [trackerId], references: [id])
+  name        String
+  description String?
 }
 
 model Tracker {
   id          Int   @id @default(autoincrement())
-  name        String
-  description String?
   owner       User     @relation(fields: [ownerId], references: [id])
   ownerId     Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   locations   Location[]
+  asset       Asset?
 }
 
 model Location {

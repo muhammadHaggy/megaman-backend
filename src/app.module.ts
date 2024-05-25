@@ -14,6 +14,8 @@ import { JWTCONSTANTS } from './common/constants/jwt';
 import { UsersModule } from './users/users.module';
 import { PrismaService } from './prisma/prisma.service';
 import { UsersService } from './users/users.service';
+import { AssetsModule } from './assets/assets.module';
+import { TrackersModule } from './trackers/trackers.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { UsersService } from './users/users.service';
       secret: JWTCONSTANTS.secret,
     }),
     UsersModule,
+    AssetsModule,
+    TrackersModule,
   ],
   controllers: [AppController, AuthController],
   providers: [
