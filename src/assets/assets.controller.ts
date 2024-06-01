@@ -10,8 +10,11 @@ import {
 import { AssetsService } from './assets.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('assets')
+@ApiTags('Assets')
+@ApiBearerAuth()
 export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 

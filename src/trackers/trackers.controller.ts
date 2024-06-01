@@ -10,8 +10,11 @@ import {
 import { TrackersService } from './trackers.service';
 import { CreateTrackerDto } from './dto/create-tracker.dto';
 import { UpdateTrackerDto } from './dto/update-tracker.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('trackers')
+@ApiTags('Trackers')
+@ApiBearerAuth()
 export class TrackersController {
   constructor(private readonly trackersService: TrackersService) {}
 
