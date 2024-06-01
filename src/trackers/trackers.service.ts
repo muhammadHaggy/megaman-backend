@@ -34,4 +34,23 @@ export class TrackersService {
       where: { id },
     });
   }
+
+  getCurrentLocations() {
+    return this.getCurrentLocationsQuery();
+  }
+
+  private async getCurrentLocationsQuery() {
+    const currentLocations = await this.prismaService.$queryRaw`
+      SELECT l1.*
+      FROM "Location" l1
+      INNER JOIN (
+        SELECT "trackerId", MAX("timestamp") as latest_timestamp
+        FROM "Location"
+        GROUP BY "trackerId"
+      ) l2
+      ON l1."trackerId" = l2."trackerId" AND l1."timestamp" = l2.latest_timestamp
+    `;
+
+    return currentLocations;
+  }
 }
