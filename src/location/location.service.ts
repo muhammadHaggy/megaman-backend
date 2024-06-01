@@ -11,4 +11,10 @@ export class LocationService {
       data: createLocationDto,
     });
   }
+
+  createBulk(createLocationDto: CreateLocationDto[]) {
+    return this.prisma.location.createMany({
+      data: createLocationDto,
+    });
+  }
 }
