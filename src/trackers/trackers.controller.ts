@@ -18,6 +18,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class TrackersController {
   constructor(private readonly trackersService: TrackersService) {}
 
+  @Get('current-locations')
+  getCurrentLocations() {
+    return this.trackersService.getCurrentLocations();
+  }
+
   @Post()
   create(@Body() createTrackerDto: CreateTrackerDto) {
     return this.trackersService.create(createTrackerDto);
