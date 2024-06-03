@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { TrackersService } from './trackers.service';
 import { CreateTrackerDto } from './dto/create-tracker.dto';
 import { UpdateTrackerDto } from './dto/update-tracker.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PageOptionsDto } from 'src/common/interfaces/pagination/page-options.dto';
 
 @Controller('trackers')
 @ApiTags('Trackers')
@@ -31,6 +33,17 @@ export class TrackersController {
   @Get()
   findAll() {
     return this.trackersService.findAll();
+  }
+
+  @Get('history/:trackerId')
+  getTrackerLocationsHistory(
+    @Param('trackerId') trackerId: number,
+    @Query() pageOptionsDto: PageOptionsDto
+  ) {
+    return this.trackersService.getTrackerLocationsHistoryQuery(
+      +trackerId,
+      pageOptionsDto
+    );
   }
 
   @Get(':id')
