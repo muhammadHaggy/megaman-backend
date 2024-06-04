@@ -1,19 +1,15 @@
-import { IsNumber, IsString, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateAssetDto {
-  @IsNotEmpty()
-  @IsNumber()
-  ownerId: number;
-
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  description?: string;
+  description: string;
 
   @IsNotEmpty()
   @IsNumber()
-  trackerId: number;
+  depreciation: number;
 }

@@ -4,4 +4,8 @@ export class CreateTrackerDto {
   @IsNotEmpty()
   @IsInt()
   ownerId: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  assetId: number;
 }

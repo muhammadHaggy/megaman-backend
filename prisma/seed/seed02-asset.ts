@@ -6,15 +6,15 @@ async function main() {
   const assets = [
     {
       ownerId: 1,
-      trackerId: 1,
       name: 'Asset 1',
       description: 'This is asset 1',
+      depreciation: 0.1,
     },
     {
       ownerId: 2,
-      trackerId: 2,
       name: 'Asset 2',
       description: 'This is asset 2',
+      depreciation: 0.1,
     },
   ];
 

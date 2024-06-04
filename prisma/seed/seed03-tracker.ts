@@ -7,12 +7,11 @@ async function main() {
     data: [
       {
         ownerId: 1,
+        assetId: 1,
       },
       {
         ownerId: 1,
-      },
-      {
-        ownerId: 2,
+        assetId: 2,
       },
     ],
   });

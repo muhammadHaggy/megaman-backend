@@ -11,6 +11,7 @@ import { AssetsService } from './assets.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/common/decorators/user.decorator';
 
 @Controller('assets')
 @ApiTags('Assets')
@@ -19,8 +20,11 @@ export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
   @Post()
-  create(@Body() createAssetDto: CreateAssetDto) {
-    return this.assetsService.create(createAssetDto);
+  create(
+    @Body() createAssetDto: CreateAssetDto,
+    @User('userId') userId: number
+  ) {
+    return this.assetsService.create(createAssetDto, userId);
   }
 
   @Get()

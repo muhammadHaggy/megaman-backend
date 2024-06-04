@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -30,10 +30,11 @@ model Asset {
   ownerId     Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  trackerId   Int @unique
-  tracker     Tracker  @relation(fields: [trackerId], references: [id])
   name        String
-  description String?
+  description String
+  depreciation Float
+  image      Bytes? @db.Blob
+  tracker    Tracker?
 }
 
 model Tracker {
@@ -43,7 +44,8 @@ model Tracker {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   locations   Location[]
-  asset       Asset?
+  assetId     Int      @unique
+  asset       Asset   @relation(fields: [assetId], references: [id])
 }
 
 model Location {

@@ -6,9 +6,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class AssetsService {
   constructor(private prismaService: PrismaService) {}
-  create(createAssetDto: CreateAssetDto) {
+  create(createAssetDto: CreateAssetDto, userId: number) {
     return this.prismaService.asset.create({
-      data: createAssetDto,
+      data: {
+        ...createAssetDto,
+        ownerId: userId,
+      },
     });
   }
 
