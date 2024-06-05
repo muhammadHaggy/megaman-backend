@@ -42,18 +42,30 @@ export class TrackersService {
   }
 
   private async getCurrentLocationsQuery() {
-    const currentLocations = await this.prismaService.$queryRaw`
-      SELECT l1.*
-      FROM "Location" l1
-      INNER JOIN (
-        SELECT "trackerId", MAX("timestamp") as latest_timestamp
-        FROM "Location"
-        GROUP BY "trackerId"
-      ) l2
-      ON l1."trackerId" = l2."trackerId" AND l1."timestamp" = l2.latest_timestamp
-    `;
+    const currentLocations = await this.prismaService.location.groupBy({
+      by: ['trackerId'],
+      _count: {
+        id: true,
+      },
+      _max: {
+        timestamp: true,
+      },
+    });
 
-    return currentLocations;
+    const trackerIds = currentLocations.map((location) => location.trackerId);
+
+    const locations = await this.prismaService.location.findMany({
+      where: {
+        trackerId: {
+          in: trackerIds,
+        },
+        timestamp: {
+          in: currentLocations.map((location) => location._max.timestamp),
+        },
+      },
+    });
+
+    return locations;
   }
 
   async getTrackerLocationsHistoryQuery(
