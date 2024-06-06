@@ -31,7 +31,6 @@ export class AssetsController {
       limits: { fileSize: 1024 * 1024 },
       fileFilter: (req: any, file: any, cb: any) => {
         if (file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
-          // Allow storage of file
           cb(null, true);
         } else {
           // Reject file
@@ -91,5 +90,15 @@ export class AssetsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.assetsService.remove(+id);
+  }
+
+  @Get('static')
+  getAssetsWithoutTracker() {
+    return this.assetsService.getAssetsWithoutTracker();
+  }
+
+  @Get('dynamic')
+  getAssetsWithTracker() {
+    return this.assetsService.getAssetsWithTracker();
   }
 }

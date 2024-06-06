@@ -52,4 +52,24 @@ export class AssetsService {
       },
     });
   }
+
+  async getAssetsWithoutTracker() {
+    return this.prismaService.asset.findMany({
+      where: {
+        tracker: {
+          is: null,
+        },
+      },
+    });
+  }
+
+  async getAssetsWithTracker() {
+    return this.prismaService.asset.findMany({
+      where: {
+        tracker: {
+          isNot: null,
+        },
+      },
+    });
+  }
 }
