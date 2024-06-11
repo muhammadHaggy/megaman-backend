@@ -87,6 +87,11 @@ export class AssetsController {
     return this.assetsService.update(+id, updateAssetDto);
   }
 
+  @Patch(':id/approve')
+  approve(@Param('id') id: string) {
+    return this.assetsService.approve(+id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.assetsService.remove(+id);

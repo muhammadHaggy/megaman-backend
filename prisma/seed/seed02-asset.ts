@@ -10,6 +10,7 @@ async function main() {
       description: 'This is asset 1',
       price: 1000000,
       depreciation: 0.1,
+      isApproved: true,
     },
     {
       ownerId: 2,

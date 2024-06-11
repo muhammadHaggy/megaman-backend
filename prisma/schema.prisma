@@ -32,10 +32,12 @@ model Asset {
   updatedAt   DateTime @updatedAt
   name        String
   description String
-  price       Int
   depreciation Float
-  image      Bytes? @db.LongBlob
-  tracker    Tracker?
+  price       Int
+  imageURL    String?
+  isApproved  Boolean @default(false)
+  qrCode      String?
+  tracker     Tracker?
 }
 
 model Tracker {
