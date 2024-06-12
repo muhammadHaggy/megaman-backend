@@ -33,8 +33,11 @@ model Asset {
   name        String
   description String
   depreciation Float
-  image      Bytes? @db.LongBlob
-  tracker    Tracker?
+  price       Int
+  imageURL    String?
+  isApproved  Boolean @default(false)
+  qrCode      String?
+  tracker     Tracker?
 }
 
 model Tracker {

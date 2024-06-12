@@ -8,12 +8,15 @@ async function main() {
       ownerId: 1,
       name: 'Asset 1',
       description: 'This is asset 1',
+      price: 1000000,
       depreciation: 0.1,
+      isApproved: true,
     },
     {
       ownerId: 2,
       name: 'Asset 2',
       description: 'This is asset 2',
+      price: 500000,
       depreciation: 0.1,
     },
   ];

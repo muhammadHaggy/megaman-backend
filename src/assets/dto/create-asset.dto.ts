@@ -12,4 +12,8 @@ export class CreateAssetDto {
   @IsNotEmpty()
   @IsNumber()
   depreciation: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  price: number;
 }
