@@ -30,6 +30,7 @@ model Asset {
   ownerId     Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  purchaseDate DateTime
   name        String
   description String
   depreciation Float
