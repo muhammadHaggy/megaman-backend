@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,13 +12,31 @@ export class AssetsService {
   private storage = new Storage();
   private bucket = this.storage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
 
-  create(createAssetDto: CreateAssetDto, userId: number) {
+  async create(createAssetDto: CreateAssetDto, userId: number) {
+    const data = {
+      ...createAssetDto,
+      ownerId: userId,
+    };
+
+    if (createAssetDto.trackerId != null) {
+      const tracker = await this.checkTrackerId(createAssetDto.trackerId);
+      data.trackerId = tracker.id;
+    }
+
     return this.prismaService.asset.create({
-      data: {
-        ...createAssetDto,
-        ownerId: userId,
-      },
+      data,
     });
+  }
+
+  private async checkTrackerId(id?: number) {
+    const tracker = await this.prismaService.tracker.findUnique({
+      where: { id },
+    });
+    if (!tracker) {
+      throw new NotFoundException(`Tracker with id ${id} not found`);
+    }
+
+    return tracker;
   }
 
   findAll() {
@@ -31,6 +49,40 @@ export class AssetsService {
     });
   }
 
+  findAssetsWithoutTracker() {
+    return this.prismaService.asset.findMany({
+      where: {
+        trackerId: null,
+      },
+    });
+  }
+
+  findAssetsWithTracker() {
+    return this.prismaService.asset.findMany({
+      where: {
+        trackerId: {
+          not: null,
+        },
+      },
+    });
+  }
+
+  findApprovedAssets() {
+    return this.prismaService.asset.findMany({
+      where: {
+        isApproved: true,
+      },
+    });
+  }
+
+  findUnapprovedAssets() {
+    return this.prismaService.asset.findMany({
+      where: {
+        isApproved: false,
+      },
+    });
+  }
+
   update(id: number, updateAssetDto: UpdateAssetDto) {
     return this.prismaService.asset.update({
       where: { id },
@@ -38,22 +90,20 @@ export class AssetsService {
     });
   }
 
-  approve(id: number) {
+  async approve(id: number) {
     // Generate QR and then update Asset model
-    return this.generateQR(id)
-      .then((qrCodeResult) =>
-        this.prismaService.asset.update({
-          where: { id },
-          data: {
-            isApproved: true,
-            qrCode: qrCodeResult,
-          },
-        })
-      )
-      .catch((err) => {
-        console.error('Error approving asset:', err);
-        throw err;
+    try {
+      await this.generateQR(id);
+      return await this.prismaService.asset.update({
+        where: { id },
+        data: {
+          isApproved: true,
+        },
       });
+    } catch (err) {
+      console.error('Error approving asset:', err);
+      throw err;
+    }
   }
 
   remove(id: number) {
@@ -117,37 +167,42 @@ export class AssetsService {
   }
 
   async generateQR(assetId: number): Promise<string> {
-    const content = `${assetId}`;
+    const asset = await this.findOne(assetId);
     const filename = `qr/${assetId}`;
+    asset.qrCode = `https://storage.googleapis.com/${process.env.GCLOUD_STORAGE_BUCKET}/${filename}`;
+    const content = JSON.stringify(asset, (key, value) => {
+      // Remove unnecesary properties from the JSON
+      if (key === 'createdAt') {
+        return undefined;
+      }
+
+      if (key === 'updatedAt') {
+        return undefined;
+      }
+
+      if (key === 'owner') {
+        return undefined;
+      }
+
+      if (key === 'ownerId') {
+        return undefined;
+      }
+
+      if (key === 'isApproved') {
+        return undefined;
+      }
+      return value;
+    });
 
     try {
       const qrCodeBuffer = await qrcode.toBuffer(content, {
         type: 'image/png',
+        width: 150,
       });
       return await this.uploadToGCS(filename, qrCodeBuffer, 'image/png');
     } catch (err) {
       console.error('Error generating QR code:', err);
       throw err;
     }
-  }
-
-  async getAssetsWithoutTracker() {
-    return this.prismaService.asset.findMany({
-      where: {
-        tracker: {
-          is: null,
-        },
-      },
-    });
-  }
-
-  async getAssetsWithTracker() {
-    return this.prismaService.asset.findMany({
-      where: {
-        tracker: {
-          isNot: null,
-        },
-      },
-    });
   }
 }

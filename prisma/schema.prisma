@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// placeholder user model
+// placeholder user model 
 model User {
   id       Int   @id @default(autoincrement())
   email    String   @unique
@@ -37,6 +37,7 @@ model Asset {
   imageURL    String?
   isApproved  Boolean @default(false)
   qrCode      String?
+  trackerId   Int?
   tracker     Tracker?
 }
 
