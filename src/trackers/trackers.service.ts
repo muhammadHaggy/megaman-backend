@@ -8,37 +8,43 @@ import { PageDto } from 'src/common/interfaces/pagination/page.dto';
 @Injectable()
 export class TrackersService {
   constructor(private prismaService: PrismaService) {}
-  create(createTrackerDto: CreateTrackerDto) {
-    return this.prismaService.tracker.create({
+  async create(createTrackerDto: CreateTrackerDto) {
+    const tracker = await this.prismaService.tracker.create({
       data: createTrackerDto,
     });
+    return { data: tracker };
   }
 
-  findAll() {
-    return this.prismaService.tracker.findMany();
+  async findAll() {
+    const trackers = await this.prismaService.tracker.findMany();
+    return { data: trackers };
   }
 
-  findOne(id: number) {
-    return this.prismaService.tracker.findUnique({
+  async findOne(id: number) {
+    const tracker = await this.prismaService.tracker.findUnique({
       where: { id },
     });
+    return { data: tracker };
   }
 
-  update(id: number, updateTrackerDto: UpdateTrackerDto) {
-    return this.prismaService.tracker.update({
+  async update(id: number, updateTrackerDto: UpdateTrackerDto) {
+    const tracker = await this.prismaService.tracker.update({
       where: { id },
       data: updateTrackerDto,
     });
+    return { data: tracker };
   }
 
-  remove(id: number) {
-    return this.prismaService.tracker.delete({
+  async remove(id: number) {
+    const tracker = await this.prismaService.tracker.delete({
       where: { id },
     });
+    return { data: tracker };
   }
 
-  getCurrentLocations() {
-    return this.getCurrentLocationsQuery();
+  async getCurrentLocations() {
+    const location = await this.getCurrentLocationsQuery();
+    return { data: location };
   }
 
   private async getCurrentLocationsQuery() {

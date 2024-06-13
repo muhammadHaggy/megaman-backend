@@ -17,11 +17,12 @@ export class LocationController {
     return this.locationService.create(createLocationDto);
   }
 
-  @Post('bulk')
-  @ApiOperation({
-    summary: 'Create multiple locations',
-  })
-  createBulk(@Body() createLocationDto: CreateLocationDto[]) {
-    return this.locationService.createBulk(createLocationDto);
-  }
+  // NOT USED RIGHT NOW
+  // @Post('bulk')
+  // @ApiOperation({
+  //   summary: 'Create multiple locations',
+  // })
+  // createBulk(@Body() createLocationDto: CreateLocationDto[]) {
+  //   return this.locationService.createBulk(createLocationDto);
+  // }
 }
