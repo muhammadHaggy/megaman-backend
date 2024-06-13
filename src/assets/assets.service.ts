@@ -23,9 +23,10 @@ export class AssetsService {
       data.trackerId = tracker.id;
     }
 
-    return this.prismaService.asset.create({
+    const object = this.prismaService.asset.create({
       data,
     });
+    return { data: object };
   }
 
   private async checkTrackerId(id?: number) {
@@ -39,79 +40,87 @@ export class AssetsService {
     return tracker;
   }
 
-  findAll() {
-    const assets = this.prismaService.asset.findMany();
+  async findAll() {
+    const assets = await this.prismaService.asset.findMany();
     return { data: assets };
   }
 
-  findOne(id: number) {
-    return this.prismaService.asset.findUnique({
+  async findOne(id: number) {
+    const asset = await this.prismaService.asset.findUnique({
       where: { id },
     });
+    return { data: asset };
   }
 
-  findAssetsWithoutTracker() {
-    return this.prismaService.asset.findMany({
+  async findAssetsWithoutTracker() {
+    const assets = await this.prismaService.asset.findMany({
       where: {
         trackerId: null,
       },
     });
+    return { data: assets };
   }
 
-  findAssetsWithTracker() {
-    return this.prismaService.asset.findMany({
+  async findAssetsWithTracker() {
+    const assets = await this.prismaService.asset.findMany({
       where: {
         trackerId: {
           not: null,
         },
       },
     });
+    return { data: assets };
   }
 
-  findApprovedAssets() {
-    return this.prismaService.asset.findMany({
+  async findApprovedAssets() {
+    const assets = await this.prismaService.asset.findMany({
       where: {
         isApproved: true,
       },
     });
+    return { data: assets };
   }
 
-  findUnapprovedAssets() {
-    return this.prismaService.asset.findMany({
+  async findUnapprovedAssets() {
+    const assets = await this.prismaService.asset.findMany({
       where: {
         isApproved: false,
       },
     });
+    return { data: assets };
   }
 
-  update(id: number, updateAssetDto: UpdateAssetDto) {
-    return this.prismaService.asset.update({
+  async update(id: number, updateAssetDto: UpdateAssetDto) {
+    const assets = await this.prismaService.asset.update({
       where: { id },
       data: updateAssetDto,
     });
+    return { data: assets };
   }
 
   async approve(id: number) {
     // Generate QR and then update Asset model
     try {
       const qrCodeResult = await this.generateQR(id);
-      return await this.prismaService.asset.update({
+      const asset = await this.prismaService.asset.update({
         where: { id },
         data: {
           isApproved: true,
           qrCode: qrCodeResult,
         },
       });
+      return { data: asset };
     } catch (err) {
       console.error('Error approving asset:', err);
       throw err;
     }
   }
 
-  remove(id: number) {
-    return this.prismaService.asset.delete({
+  async remove(id: number) {
+    const asset = this.prismaService.asset.delete({
       where: { id },
     });
+    return { data: asset };
   }
 
   private async uploadToGCS(
