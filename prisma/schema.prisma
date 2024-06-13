@@ -19,7 +19,7 @@ model User {
   email    String   @unique
   username String  @unique
   name     String?
-  role     String
+  role     String @default("user")
   password String
   trackers Tracker[]
   assets   Asset[]
