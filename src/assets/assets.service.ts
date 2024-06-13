@@ -40,7 +40,8 @@ export class AssetsService {
   }
 
   findAll() {
-    return this.prismaService.asset.findMany();
+    const assets = this.prismaService.asset.findMany();
+    return { data: assets };
   }
 
   findOne(id: number) {
