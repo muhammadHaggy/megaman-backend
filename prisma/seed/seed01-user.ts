@@ -22,8 +22,8 @@ async function main() {
       email: 'user3@example.com',
       name: 'User 3',
       role: 'user',
-      password: 'password2',
-      username: 'user2',
+      password: 'password3',
+      username: 'user3',
     },
   ];
 
