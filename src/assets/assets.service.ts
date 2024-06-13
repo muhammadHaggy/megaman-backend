@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,13 +12,31 @@ export class AssetsService {
   private storage = new Storage();
   private bucket = this.storage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
 
-  create(createAssetDto: CreateAssetDto, userId: number) {
+  async create(createAssetDto: CreateAssetDto, userId: number) {
+    const data = {
+      ...createAssetDto,
+      ownerId: userId,
+    };
+
+    if (createAssetDto.trackerId != null) {
+      const tracker = await this.checkTrackerId(createAssetDto.trackerId);
+      data.trackerId = tracker.id;
+    }
+
     return this.prismaService.asset.create({
-      data: {
-        ...createAssetDto,
-        ownerId: userId,
-      },
+      data,
     });
+  }
+
+  private async checkTrackerId(id?: number) {
+    const tracker = await this.prismaService.tracker.findUnique({
+      where: { id },
+    });
+    if (!tracker) {
+      throw new NotFoundException(`Tracker with id ${id} not found`);
+    }
+
+    return tracker;
   }
 
   findAll() {
@@ -117,12 +135,36 @@ export class AssetsService {
   }
 
   async generateQR(assetId: number): Promise<string> {
-    const content = `${assetId}`;
+    const asset = await this.findOne(assetId);
+    const content = JSON.stringify(asset, (key, value) => {
+      // Remove unnecesary properties from the JSON
+      if (key === 'createdAt') {
+        return undefined;
+      }
+
+      if (key === 'updatedAt') {
+        return undefined;
+      }
+
+      if (key === 'owner') {
+        return undefined;
+      }
+
+      if (key === 'ownerId') {
+        return undefined;
+      }
+
+      if (key === 'isApproved') {
+        return undefined;
+      }
+      return value;
+    });
     const filename = `qr/${assetId}`;
 
     try {
       const qrCodeBuffer = await qrcode.toBuffer(content, {
         type: 'image/png',
+        width: 150,
       });
       return await this.uploadToGCS(filename, qrCodeBuffer, 'image/png');
     } catch (err) {
@@ -131,21 +173,19 @@ export class AssetsService {
     }
   }
 
-  async getAssetsWithoutTracker() {
+  getAssetsWithoutTracker() {
     return this.prismaService.asset.findMany({
       where: {
-        tracker: {
-          is: null,
-        },
+        trackerId: null,
       },
     });
   }
 
-  async getAssetsWithTracker() {
+  getAssetsWithTracker() {
     return this.prismaService.asset.findMany({
       where: {
-        tracker: {
-          isNot: null,
+        trackerId: {
+          not: null,
         },
       },
     });

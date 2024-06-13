@@ -77,6 +77,16 @@ export class AssetsController {
     return this.assetsService.findAll();
   }
 
+  @Get('static')
+  getAssetsWithoutTracker() {
+    return this.assetsService.getAssetsWithoutTracker();
+  }
+
+  @Get('mobile')
+  getAssetsWithTracker() {
+    return this.assetsService.getAssetsWithTracker();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.assetsService.findOne(+id);
@@ -95,15 +105,5 @@ export class AssetsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.assetsService.remove(+id);
-  }
-
-  @Get('static')
-  getAssetsWithoutTracker() {
-    return this.assetsService.getAssetsWithoutTracker();
-  }
-
-  @Get('dynamic')
-  getAssetsWithTracker() {
-    return this.assetsService.getAssetsWithTracker();
   }
 }

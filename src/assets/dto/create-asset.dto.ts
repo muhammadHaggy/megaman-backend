@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateAssetDto {
   @IsNotEmpty()
@@ -16,4 +16,8 @@ export class CreateAssetDto {
   @IsNotEmpty()
   @IsNumber()
   price: number;
+
+  @IsOptional()
+  @IsNumber()
+  trackerId: number;
 }

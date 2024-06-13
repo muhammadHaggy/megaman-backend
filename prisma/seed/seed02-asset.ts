@@ -18,6 +18,7 @@ async function main() {
       description: 'This is asset 2',
       price: 500000,
       depreciation: 0.1,
+      trackerId: 2,
     },
   ];
 
