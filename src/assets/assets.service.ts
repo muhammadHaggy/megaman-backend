@@ -117,7 +117,7 @@ export class AssetsService {
   }
 
   async remove(id: number) {
-    const asset = this.prismaService.asset.delete({
+    const asset = await this.prismaService.asset.delete({
       where: { id },
     });
     return { data: asset };

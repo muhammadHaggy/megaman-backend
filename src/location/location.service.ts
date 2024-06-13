@@ -6,15 +6,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class LocationService {
   constructor(readonly prisma: PrismaService) {}
 
-  create(createLocationDto: CreateLocationDto) {
-    return this.prisma.location.create({
+  async create(createLocationDto: CreateLocationDto) {
+    const location = await this.prisma.location.create({
       data: createLocationDto,
     });
+    return { data: location };
   }
 
-  createBulk(createLocationDto: CreateLocationDto[]) {
-    return this.prisma.location.createMany({
-      data: createLocationDto,
-    });
-  }
+  // Bulk Create [FUTURE WORK]
+  // createBulk(createLocationDto: CreateLocationDto[]) {
+  //   return this.prisma.location.createMany({
+  //     data: createLocationDto,
+  //   });
+  // }
 }
