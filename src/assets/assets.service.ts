@@ -93,12 +93,11 @@ export class AssetsService {
   async approve(id: number) {
     // Generate QR and then update Asset model
     try {
-      const qrCodeResult = await this.generateQR(id);
+      await this.generateQR(id);
       return await this.prismaService.asset.update({
         where: { id },
         data: {
           isApproved: true,
-          qrCode: qrCodeResult,
         },
       });
     } catch (err) {
