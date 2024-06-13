@@ -1,4 +1,11 @@
-import { IsNumber, IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNumber,
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsDate,
+} from 'class-validator';
 
 export class CreateAssetDto {
   @IsNotEmpty()
@@ -20,4 +27,9 @@ export class CreateAssetDto {
   @IsOptional()
   @IsNumber()
   trackerId: number;
+
+  @IsNotEmpty()
+  @IsDate()
+  @Type(() => Date)
+  purchaseDate: Date;
 }
