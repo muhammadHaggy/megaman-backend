@@ -165,12 +165,13 @@ export class AssetsService {
         imageBuffer,
         contentType
       );
-      return this.prismaService.asset.update({
+      const asset = this.prismaService.asset.update({
         where: { id: assetId },
         data: {
           imageURL: imageURL,
         },
       });
+      return { data: asset };
     } catch (err) {
       console.error('Error processing file:', err);
       throw err;
@@ -180,7 +181,7 @@ export class AssetsService {
   async generateQR(assetId: number): Promise<string> {
     const asset = await this.findOne(assetId);
     const filename = `qr/${assetId}`;
-    asset.qrCode = `https://storage.googleapis.com/${process.env.GCLOUD_STORAGE_BUCKET}/${filename}`;
+    asset.data.qrCode = `https://storage.googleapis.com/${process.env.GCLOUD_STORAGE_BUCKET}/${filename}`;
     const content = JSON.stringify(asset, (key, value) => {
       // Remove unnecesary properties from the JSON
       if (key === 'createdAt') {
