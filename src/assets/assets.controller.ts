@@ -78,13 +78,23 @@ export class AssetsController {
   }
 
   @Get('static')
-  getAssetsWithoutTracker() {
-    return this.assetsService.getAssetsWithoutTracker();
+  findAssetsWithoutTracker() {
+    return this.assetsService.findAssetsWithoutTracker();
   }
 
   @Get('mobile')
-  getAssetsWithTracker() {
-    return this.assetsService.getAssetsWithTracker();
+  findAssetsWithTracker() {
+    return this.assetsService.findAssetsWithTracker();
+  }
+
+  @Get('approved')
+  findApprovedAssets() {
+    return this.assetsService.findApprovedAssets();
+  }
+
+  @Get('unapproved')
+  findUnapprovedAssets() {
+    return this.assetsService.findUnapprovedAssets();
   }
 
   @Get(':id')

@@ -49,6 +49,40 @@ export class AssetsService {
     });
   }
 
+  findAssetsWithoutTracker() {
+    return this.prismaService.asset.findMany({
+      where: {
+        trackerId: null,
+      },
+    });
+  }
+
+  findAssetsWithTracker() {
+    return this.prismaService.asset.findMany({
+      where: {
+        trackerId: {
+          not: null,
+        },
+      },
+    });
+  }
+
+  findApprovedAssets() {
+    return this.prismaService.asset.findMany({
+      where: {
+        isApproved: true,
+      },
+    });
+  }
+
+  findUnapprovedAssets() {
+    return this.prismaService.asset.findMany({
+      where: {
+        isApproved: false,
+      },
+    });
+  }
+
   update(id: number, updateAssetDto: UpdateAssetDto) {
     return this.prismaService.asset.update({
       where: { id },
@@ -56,22 +90,21 @@ export class AssetsService {
     });
   }
 
-  approve(id: number) {
+  async approve(id: number) {
     // Generate QR and then update Asset model
-    return this.generateQR(id)
-      .then((qrCodeResult) =>
-        this.prismaService.asset.update({
-          where: { id },
-          data: {
-            isApproved: true,
-            qrCode: qrCodeResult,
-          },
-        })
-      )
-      .catch((err) => {
-        console.error('Error approving asset:', err);
-        throw err;
+    try {
+      const qrCodeResult = await this.generateQR(id);
+      return await this.prismaService.asset.update({
+        where: { id },
+        data: {
+          isApproved: true,
+          qrCode: qrCodeResult,
+        },
       });
+    } catch (err) {
+      console.error('Error approving asset:', err);
+      throw err;
+    }
   }
 
   remove(id: number) {
@@ -136,6 +169,8 @@ export class AssetsService {
 
   async generateQR(assetId: number): Promise<string> {
     const asset = await this.findOne(assetId);
+    const filename = `qr/${assetId}`;
+    asset.qrCode = `https://storage.googleapis.com/${process.env.GCLOUD_STORAGE_BUCKET}/${filename}`;
     const content = JSON.stringify(asset, (key, value) => {
       // Remove unnecesary properties from the JSON
       if (key === 'createdAt') {
@@ -159,7 +194,6 @@ export class AssetsService {
       }
       return value;
     });
-    const filename = `qr/${assetId}`;
 
     try {
       const qrCodeBuffer = await qrcode.toBuffer(content, {
@@ -171,23 +205,5 @@ export class AssetsService {
       console.error('Error generating QR code:', err);
       throw err;
     }
-  }
-
-  getAssetsWithoutTracker() {
-    return this.prismaService.asset.findMany({
-      where: {
-        trackerId: null,
-      },
-    });
-  }
-
-  getAssetsWithTracker() {
-    return this.prismaService.asset.findMany({
-      where: {
-        trackerId: {
-          not: null,
-        },
-      },
-    });
   }
 }
