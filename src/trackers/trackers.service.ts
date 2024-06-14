@@ -108,4 +108,13 @@ export class TrackersService {
       return new PageDto(data, pageMetaDto);
     });
   }
+
+  async getTrackerLocationsHistoryAll(trackerId: number) {
+    const locations = await this.prismaService.location.findMany({
+      where: {
+        trackerId,
+      },
+    });
+    return { data: locations };
+  }
 }

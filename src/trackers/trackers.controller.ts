@@ -35,6 +35,11 @@ export class TrackersController {
     return this.trackersService.findAll();
   }
 
+  @Get('history/:trackerId/all')
+  getTrackerLocationsHistoryAll(@Param('trackerId') trackerId: number) {
+    return this.trackersService.getTrackerLocationsHistoryAll(+trackerId);
+  }
+
   @Get('history/:trackerId')
   getTrackerLocationsHistory(
     @Param('trackerId') trackerId: number,
